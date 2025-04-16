@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
-import SourceSelector from './components/SourceSelector';
-import ClickHouseForm from './components/ClickHouseForm';
-import FlatFileForm from './components/FlatFileForm';
-import DataPreview from './components/DataPreview';
-import ProgressBar from './components/ProgressBar';
-import StatusDisplay from './components/StatusDisplay';
-import RecordCountDisplay from './components/RecordCountDisplay';
-import { previewClickHouse, previewFlatFile, ingestData, getProgress } from './api';
+import React, { useState } from "react";
+import SourceSelector from "./components/SourceSelector";
+import ClickHouseForm from "./components/ClickHouseForm";
+import FlatFileForm from "./components/FlatFileForm";
+import ColumnSelector from "./components/ColumnSelector";
+import DataPreview from "./components/DataPreview";
+import ProgressBar from "./components/ProgressBar";
+import StatusDisplay from "./components/StatusDisplay";
+import RecordCountDisplay from "./components/RecordCountDisplay";
+import {
+  previewClickHouse,
+  ingestData,
+  getProgress,
+} from "./api";
 
 function App() {
-  const [source, setSource] = useState('clickhouse'); // default selection
+  const [source, setSource] = useState("clickhouse"); // default selection
   const [tables, setTables] = useState([]);
   const [columns, setColumns] = useState([]);
+  const [selectedColumns, setSelectedColumns] = useState([]);
   const [previewData, setPreviewData] = useState([]);
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState("");
   const [recordCount, setRecordCount] = useState(0);
   const [progress, setProgress] = useState(0);
+
+  const handleColumnSelect = (selected) => {
+    setSelectedColumns(selected);
+  };
 
   // This example assumes you will add buttons and handlers for preview and ingestion
   const handlePreviewClickHouse = async () => {
@@ -37,36 +47,35 @@ function App() {
     }
   };
 
-  const handlePreviewFlatFile = async (file, delimiter = ',') => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('delimiter', delimiter);
-    try {
-      const response = await previewFlatFile(formData);
-      setPreviewData(response.data.preview);
-    } catch (error) {
-      setStatus("Error fetching preview from Flat File");
-    }
-  };
-
   const handleIngestion = async (direction) => {
     // Set up ingestion parameters based on the selected source
-    // This is an example for ClickHouse to Flat File ingestion
     let params = {};
-    if (direction === 'ch_to_flat') {
+    if (direction === "ch_to_flat") {
+      // Example parameters for ClickHouse to Flat File
       params = {
-        direction: 'ch_to_flat',
+        direction: "ch_to_flat",
         host: "your_host",
         port: 9440,
         database: "your_db",
         user: "your_user",
         jwt_token: "your_jwt",
-        query: "SELECT * FROM " + tables[0], // example; you could enhance by selecting specific columns
-        delimiter: ',',
+        query: "SELECT * FROM " + tables[0],
+        delimiter: ",",
+        selected_columns: selectedColumns, // Pass selected columns
       };
-    } else if (direction === 'flat_to_ch') {
-      // For flat_file to ClickHouse ingestion you will pass additional parameters.
-      // Adjust params accordingly.
+    } else if (direction === "flat_to_ch") {
+      // Example parameters for Flat File to ClickHouse
+      params = {
+        direction: "flat_to_ch",
+        host: "your_host",
+        port: 9440,
+        database: "your_db",
+        user: "your_user",
+        jwt_token: "your_jwt",
+        table: tables[0],
+        delimiter: ",",
+        selected_columns: selectedColumns, // Pass selected columns
+      };
     }
 
     try {
@@ -91,15 +100,16 @@ function App() {
     <div className="App">
       <h1>Bidirectional Data Ingestion Tool</h1>
       <SourceSelector source={source} setSource={setSource} />
-      {source === 'clickhouse' ? (
-        <ClickHouseForm onTablesFetched={setTables} />
+      {source === "clickhouse" ? (
+        <ClickHouseForm onTablesFetched={setTables} onColumnsFetched={setColumns} columns={columns} onColumnSelect={handleColumnSelect} />
       ) : (
-        <FlatFileForm onColumnsFetched={setColumns} />
+        <FlatFileForm onColumnsFetched={setColumns} columns={columns} onColumnSelect={handleColumnSelect}/>
       )}
       <button onClick={handlePreviewClickHouse}>Preview Data</button>
-      {/* For Flat File preview, you might include a file input and pass the file to handlePreviewFlatFile */}
       <DataPreview previewData={previewData} />
-      <button onClick={() => handleIngestion('ch_to_flat')}>Start Ingestion</button>
+      <button onClick={() => handleIngestion("ch_to_flat")}>
+        Start Ingestion
+      </button>
       <StatusDisplay status={status} />
       <RecordCountDisplay count={recordCount} />
       <ProgressBar progress={progress} />

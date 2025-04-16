@@ -70,6 +70,7 @@ async def connect_clickhouse(params: ClickHouseConnectionParams):
             host=params.host,
             port=params.port,
             database=params.database,
+            password=params.password,
             user=params.user,
             jwt_token=params.jwt_token
         )
@@ -193,6 +194,7 @@ class IngestParams(BaseModel):
     table: str = None
     file_path: str = None  # local CSV path (for simplicity)
     delimiter: str = ','
+    selected_columns: list = None
 
 @app.post("/ingest")
 async def ingest_data(params: IngestParams):
@@ -205,7 +207,7 @@ async def ingest_data(params: IngestParams):
             if client is None:
                 raise ValueError("Failed to connect to ClickHouse")
             output_file = "output.csv"
-            count = ingest_clickhouse_to_flatfile(client, params.query, output_file, params.delimiter)
+            count = ingest_clickhouse_to_flatfile(client, params.query, output_file, params.delimiter, params.selected_columns)
             return {"ingested_records": count, "output_file": output_file}
         elif params.direction == "flat_to_ch":
             required = [params.host, params.port, params.database, params.user, params.jwt_token, params.table, params.file_path]
@@ -214,7 +216,7 @@ async def ingest_data(params: IngestParams):
             client = create_clickhouse_client(params.host, params.port, params.database, params.user, params.jwt_token)
             if client is None:
                 raise ValueError("Failed to connect to ClickHouse")
-            count = ingest_flatfile_to_clickhouse(client, params.file_path, params.table, params.delimiter)
+            count = ingest_flatfile_to_clickhouse(client, params.file_path, params.table, params.delimiter, params.selected_columns)
             return {"ingested_records": count}
         else:
             raise ValueError("Invalid ingestion direction. Use 'ch_to_flat' or 'flat_to_ch'.")

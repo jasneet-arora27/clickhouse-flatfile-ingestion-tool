@@ -21,3 +21,14 @@ def preview_data(file_path: str, delimiter: str = ',', rows: int = 100):
     except Exception as e:
         print(f"Error previewing data from {file_path}: {e}")
         return []
+
+def read_flatfile_data(file_path: str, delimiter: str = ','):
+    """
+    Reads the entire CSV (or flat file) and returns the data as a list of dictionaries.
+    """
+    try:
+        df = pd.read_csv(file_path, delimiter=delimiter)
+        return df.to_dict(orient="records")
+    except Exception as e:
+        print(f"Error reading data from {file_path}: {e}")
+        return []

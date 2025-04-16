@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { connectFlatFile } from '../api';
+import ColumnSelector from './ColumnSelector';
 
-function FlatFileForm({ onColumnsFetched }) {
+function FlatFileForm({ onColumnsFetched, columns, onColumnSelect }) {
   const [delimiter, setDelimiter] = useState(',');
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
+  const [fileColumns, setFileColumns] = useState([]);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -22,6 +24,7 @@ function FlatFileForm({ onColumnsFetched }) {
     formData.append('delimiter', delimiter);
     try {
       const response = await connectFlatFile(formData);
+      setFileColumns(response.data.columns);
       onColumnsFetched(response.data.columns);
     } catch (err) {
       console.error(err);
@@ -38,9 +41,9 @@ function FlatFileForm({ onColumnsFetched }) {
         <button type="submit">Load File</button>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {fileColumns.length > 0 && <ColumnSelector columns={fileColumns} onColumnSelect={onColumnSelect} />}
     </div>
   );
 }
 
 export default FlatFileForm;
-

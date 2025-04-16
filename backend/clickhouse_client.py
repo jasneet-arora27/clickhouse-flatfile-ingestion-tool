@@ -1,3 +1,4 @@
+import requests
 from clickhouse_connect import get_client
 
 def create_clickhouse_client(host: str, port: int, database: str, user: str, jwt_token: str):
@@ -5,13 +6,13 @@ def create_clickhouse_client(host: str, port: int, database: str, user: str, jwt
     Creates and returns a ClickHouse client connection.
     """
     try:
+        headers = {'Authorization': f'Bearer {jwt_token}'}
         client = get_client(
             host=host,
             port=port,
             database=database,
             username=user,
-            password=jwt_token,  # Some libraries might expect the JWT here
-            protocol='https'
+            headers=headers
         )
         return client
     except Exception as e:

@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from main import app
+from .main import app
 
 client = TestClient(app)
 
@@ -12,7 +12,7 @@ def test_root():
 def test_connect_clickhouse_error():
     response = client.post(
         "/connect/clickhouse",
-        json={"host": "", "port": 9440, "database": "test", "user": "test", "jwt_token": "invalid"}
+        json={"host": "", "port": 9440, "database": "test", "user": "test"}
     )
     assert response.status_code == 400
     assert "Error connecting to ClickHouse" in response.json()["detail"]
