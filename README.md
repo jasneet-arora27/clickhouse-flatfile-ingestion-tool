@@ -35,16 +35,22 @@ The UI provides the following elements:
 - Status display area (Connecting, Fetching, Ingesting, Completed, Error).
 - Result display area (record count or error message).
 
-## Enhancements
+## Setup Instructions
 
-- Multi-Table Join (ClickHouse Source):
+1.  Clone the repository.
+2.  Install the backend dependencies: `cd backend && pip install -r requirements.txt`
+3.  Install the frontend dependencies: `cd frontend && npm install`
 
-  - Allows selection of multiple ClickHouse tables.
-  - Provides a UI element to input JOIN key(s)/conditions.
-  - Constructs and executes the JOIN query for ingestion in the backend.
+## Configuration
 
-- Progress Bar: Visual indicator of ingestion progress (can be approximate).
-- Data Preview: Button to display the first 100 records of the selected source data (with selected columns) in the UI before full ingestion.
+1.  Configure the ClickHouse connection parameters in the frontend UI.
+2.  Configure the Flat File source parameters in the frontend UI.
+
+## Run Instructions
+
+1.  Start the backend: `cd backend && python main.py`
+2.  Start the frontend: `cd frontend && npm start`
+3.  Open the application in your browser.
 
 ## Technical Details
 
