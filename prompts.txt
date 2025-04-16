@@ -1,0 +1,19 @@
+1. How should I architect a web app that supports data ingestion from ClickHouse to flat file and vice versa?
+2. What are the best practices for handling JWT authentication when connecting to a ClickHouse database?
+3. Can you explain how ClickHouse clients work in Golang and Java?
+4. What are some UI frameworks that are quick to integrate with a backend for form-based user input?
+5. How do I use the official ClickHouse Golang client to connect with JWT authentication?
+6. What is the structure of a ClickHouse SQL query to extract specific columns from a table?
+7. How can I implement schema discovery for ClickHouse in a user interface?
+8. How to parse a CSV file and detect schema (column names and types) in Python or Java?
+9. What are good ways to allow checkbox-based column selection in a React frontend?
+10. How do I report the number of records processed after a batch ingestion job completes?
+11. What’s the best way to handle large file ingestion efficiently (batch vs. streaming)?
+12. How should I implement error handling for DB connection issues in a web app?
+13. Can you describe a clean way to structure code for multi-table joins in ClickHouse from UI inputs?
+14. How can I safely map data types between ClickHouse and CSV/flat files to avoid mismatches?
+15. What are some visual ideas for showing ingestion status (connecting, ingesting, error, completed)?
+16. How do I show a progress bar for long-running ingestion operations in a web UI?
+17. How can I allow users to preview data (e.g., first 100 rows) before ingestion?
+18. What are some example datasets available in ClickHouse for testing ingestion tools?
+19. How can I simulate ingestion failures for testing error handling in my tool?
